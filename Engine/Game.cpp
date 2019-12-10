@@ -26,9 +26,9 @@ Game::Game( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd ),
-	brd( gfx ),
 	rng( std::random_device()() ),
 	snek( {2,2} ),
+	brd(rng,snek,gfx),
 	goal( rng,brd,snek )
 {
 	sndTitle.Play( 1.0f,1.0f );
@@ -91,6 +91,7 @@ void Game::UpdateModel()
 					}
 					else
 					{
+						brd.Poisoned(next);
 						snek.MoveBy( delta_loc );
 					}
 					sfxSlither.Play( rng,0.08f );
@@ -121,6 +122,7 @@ void Game::ComposeFrame()
 		}
 		brd.DrawBorder();
 		brd.DrawObstacle();
+		brd.DrawPoison();
 	}
 	else
 	{

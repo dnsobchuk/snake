@@ -48,11 +48,11 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	Board brd;
-	Snake snek;
 	Location delta_loc = {1,0};
-	std::mt19937 rng;
 	FrameTimer ft;
+	std::mt19937 rng;
+	Snake snek;
+	Board brd;
 	Goal goal;
 	SoundEffect sfxEat = SoundEffect( { L"Sounds\\Eat.wav" } );
 	SoundEffect sfxSlither = SoundEffect( { L"Sounds\\Slither0.wav",L"Sounds\\Slither1.wav",L"Sounds\\Slither2.wav" } );
