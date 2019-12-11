@@ -88,10 +88,16 @@ void Game::UpdateModel()
 						goal.Respawn( rng,brd,snek );
 						brd.SpawnObstacle(rng, snek, goal);
 						sfxEat.Play( rng,0.8f );
+						snekMovePeriod = snekMovePeriodStart;
 					}
 					else
 					{
-						brd.Poisoned(next);
+						if (brd.CheckForPoison(next)) 
+						{
+							sfxEat.Play(rng, 0.8f);
+							brd.Poisoned(next);
+							snekMovePeriod = std::max(snekMovePeriod - dt * snekPoisonedFactor, snekMovePeriodMin);
+						}
 						snek.MoveBy( delta_loc );
 					}
 					sfxSlither.Play( rng,0.08f );

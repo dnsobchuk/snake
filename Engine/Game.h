@@ -42,6 +42,7 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void SpeedUp(float dt);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -60,9 +61,11 @@ private:
 	Sound sndTitle = Sound( L"Sounds\\Title.wav" );
 	Sound sndFart = Sound( L"Sounds\\Fart.wav" );
 	static constexpr float snekMovePeriodMin = 0.06f;
-	float snekMovePeriod = 0.4f;
+	static constexpr float snekMovePeriodStart = 0.4f;
+	float snekMovePeriod = snekMovePeriodStart;
 	float snekMoveCounter = 0.0f;
 	static constexpr float snekSpeedupFactor = 0.005f;
+	static constexpr float snekPoisonedFactor = 0.5f;
 	bool gameIsOver = false;
 	bool gameIsStarted = false;
 	/********************************/

@@ -88,10 +88,7 @@ void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
 
 void Board::Poisoned(const Location& loc)
 {
-	if (CheckForPoison(loc))
-	{
-		hasPoison[loc.y * width + loc.x] = false;
-	}
+	hasPoison[loc.y * width + loc.x] = false;
 }
 
 void Board::DrawBorder()
