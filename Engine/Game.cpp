@@ -66,6 +66,13 @@ void Game::UpdateModel()
 			{
 				delta_loc = { 1,0 };
 			}
+			else if (wnd.kbd.KeyIsPressed(VK_CONTROL)) {
+				ForsageSpeedUp(dt);
+			}
+			else 
+			{
+				snekMovePeriod = std::max(snekMovePeriodBeforeForsage, snekMovePeriod);
+			}
 
 			snekMoveCounter += dt;
 			if( snekMoveCounter >= snekMovePeriod )
@@ -96,14 +103,14 @@ void Game::UpdateModel()
 						{
 							sfxEat.Play(rng, 0.8f);
 							brd.Poisoned(next);
-							snekMovePeriod = std::max(snekMovePeriod - dt * snekPoisonedFactor, snekMovePeriodMin);
+							PoisonedSpeedUp(dt);
 						}
 						snek.MoveBy( delta_loc );
 					}
 					sfxSlither.Play( rng,0.08f );
 				}
 			}
-			snekMovePeriod = std::max( snekMovePeriod - dt * snekSpeedupFactor,snekMovePeriodMin );
+			SpeedUp(dt);
 		}
 	}
 	else
@@ -116,19 +123,36 @@ void Game::UpdateModel()
 	}
 }
 
+void Game::SpeedUp(float dt)
+{
+	snekMovePeriod = std::max(snekMovePeriod - dt * snekSpeedupFactor, snekMovePeriodMin);
+}
+
+void Game::PoisonedSpeedUp(float dt)
+{
+	snekMovePeriodBeforeForsage = std::max(snekMovePeriodBeforeForsage - dt * snekPoisonedFactor, snekMovePeriodMin);
+	snekMovePeriod = std::max(snekMovePeriod - dt * snekPoisonedFactor, snekMovePeriodMin);
+}
+
+void Game::ForsageSpeedUp(float dt)
+{
+	snekMovePeriodBeforeForsage = std::max(snekMovePeriodBeforeForsage, snekMovePeriod);
+	snekMovePeriod = std::max(snekMovePeriod - dt, snekMovePeriodMin);
+}
+
 void Game::ComposeFrame()
 {
 	if( gameIsStarted )
 	{
 		snek.Draw( brd );
 		goal.Draw( brd );
-		if( gameIsOver )
-		{
-			SpriteCodex::DrawGameOver( 350,265,gfx );
-		}
+		brd.DrawPoison();
 		brd.DrawBorder();
 		brd.DrawObstacle();
-		brd.DrawPoison();
+		if (gameIsOver)
+		{
+			SpriteCodex::DrawGameOver(350, 265, gfx);
+		}
 	}
 	else
 	{

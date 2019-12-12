@@ -43,6 +43,8 @@ private:
 	/********************************/
 	/*  User Functions              */
 	void SpeedUp(float dt);
+	void PoisonedSpeedUp(float dt);
+	void ForsageSpeedUp(float dt);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -64,6 +66,7 @@ private:
 	static constexpr float snekMovePeriodStart = 0.4f;
 	float snekMovePeriod = snekMovePeriodStart;
 	float snekMoveCounter = 0.0f;
+	float snekMovePeriodBeforeForsage;
 	static constexpr float snekSpeedupFactor = 0.005f;
 	static constexpr float snekPoisonedFactor = 0.5f;
 	bool gameIsOver = false;

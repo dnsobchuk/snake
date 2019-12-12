@@ -60,7 +60,7 @@ void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake, const Goal& goal
 	{
 		newLoc.x = xDist(rng);
 		newLoc.y = yDist(rng);
-	} while ( snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || goal.GetLocation() == newLoc );
+	} while ( snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || goal.GetLocation() == newLoc || CheckForPoison(newLoc) );
 
 	hasObstacle[newLoc.y * width + newLoc.x] = true;
 }
