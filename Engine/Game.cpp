@@ -28,8 +28,7 @@ Game::Game( MainWindow& wnd )
 	gfx( wnd ),
 	rng( std::random_device()() ),
 	snek( {2,2} ),
-	brd(rng,snek,gfx),
-	goal( rng,brd,snek )
+	brd(rng,snek,gfx)
 {
 	sndTitle.Play( 1.0f,1.0f );
 }
@@ -89,11 +88,12 @@ void Game::UpdateModel()
 				}
 				else
 				{
-					if( next == goal.GetLocation() )
+					if( brd.CheckForGoal(next) )
 					{
 						snek.GrowAndMoveBy( delta_loc );
-						goal.Respawn( rng,brd,snek );
-						brd.SpawnObstacle(rng, snek, goal);
+						brd.GoalCollide(next);
+						brd.SpawnGoal(rng,snek);
+						brd.SpawnObstacle(rng, snek);
 						sfxEat.Play( rng,0.8f );
 						snekMovePeriod = snekMovePeriodStart;
 					}
@@ -145,7 +145,7 @@ void Game::ComposeFrame()
 	if( gameIsStarted )
 	{
 		snek.Draw( brd );
-		goal.Draw( brd );
+		brd.DrawGoal();
 		brd.DrawPoison();
 		brd.DrawBorder();
 		brd.DrawObstacle();

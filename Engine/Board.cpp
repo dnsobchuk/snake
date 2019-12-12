@@ -9,6 +9,7 @@ Board::Board(std::mt19937 rng, const class Snake& snake, Graphics& gfx)
 	gfx( gfx )
 {
 	SpawnPoison(rng, snake);
+	InitGoal(rng, snake);
 }
 
 void Board::DrawCell( const Location & loc,Color c )
@@ -50,7 +51,12 @@ bool Board::CheckForPoison(const Location& loc) const
 	return hasPoison[loc.y * width + loc.x];
 }
 
-void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake, const Goal& goal)
+bool Board::CheckForGoal(const Location & loc) const
+{
+	return hasGoal[loc.y * width + loc.x];
+}
+
+void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake)
 {
 	std::uniform_int_distribution<int> xDist(0, GetGridWidth() - 1);
 	std::uniform_int_distribution<int> yDist(0, GetGridHeight() - 1);
@@ -60,9 +66,40 @@ void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake, const Goal& goal
 	{
 		newLoc.x = xDist(rng);
 		newLoc.y = yDist(rng);
-	} while ( snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || goal.GetLocation() == newLoc || CheckForPoison(newLoc) );
+	} while ( snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc) );
 
 	hasObstacle[newLoc.y * width + newLoc.x] = true;
+}
+
+void Board::InitGoal(std::mt19937 rng, const Snake & snake)
+{
+	std::uniform_int_distribution<int> xDist(0, GetGridWidth() - 1);
+	std::uniform_int_distribution<int> yDist(0, GetGridHeight() - 1);
+
+	Location newLoc;
+	for (int i = 0; i <= nGoal; i++)
+	{
+		newLoc.x = xDist(rng);
+		newLoc.y = yDist(rng);
+		if ( !(snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc) ) ) 
+		{
+			hasGoal[newLoc.y * width + newLoc.x] = true;
+		}
+	}
+}
+
+void Board::SpawnGoal(std::mt19937 rng, const Snake & snake)
+{
+	std::uniform_int_distribution<int> xDist(0, GetGridWidth() - 1);
+	std::uniform_int_distribution<int> yDist(0, GetGridHeight() - 1);
+
+	Location newLoc;
+	do
+	{
+		newLoc.x = xDist(rng);
+		newLoc.y = yDist(rng);
+	} while (snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc));
+	hasGoal[newLoc.y * width + newLoc.x] = true;
 }
 
 void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
@@ -89,6 +126,11 @@ void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
 void Board::Poisoned(const Location& loc)
 {
 	hasPoison[loc.y * width + loc.x] = false;
+}
+
+void Board::GoalCollide(const Location & loc)
+{
+	hasGoal[loc.y * width + loc.x] = false;
 }
 
 void Board::DrawBorder()
@@ -131,6 +173,20 @@ void Board::DrawPoison()
 			if (CheckForPoison({ x,y }))
 			{
 				DrawCell({ x,y }, poisonColor);
+			}
+		}
+	}
+}
+
+void Board::DrawGoal()
+{
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			if (CheckForGoal({ x,y }))
+			{
+				DrawCell({ x,y }, goalColor);
 			}
 		}
 	}
