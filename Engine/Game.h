@@ -57,6 +57,8 @@ private:
 	Sound sndMusic = Sound( L"Sounds\\Music_Loop.wav",Sound::LoopType::AutoFullSound );
 	Sound sndTitle = Sound( L"Sounds\\Title.wav" );
 	Sound sndFart = Sound( L"Sounds\\Fart.wav" );
+	static constexpr int nGoal = 10;
+	static constexpr int nPoison = 120;
 	static constexpr float snekMovePeriodMin = 0.040f;
 	static constexpr float snekMovePeriodSpeedup = 0.15f;
 	float snekMovePeriod = 0.4f;

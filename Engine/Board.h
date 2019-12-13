@@ -15,24 +15,16 @@ public:
 		Goal
 	};
 public:
-	Board(std::mt19937 rng, const class Snake& snake, Graphics& gfx);
+	Board(Graphics& gfx);
 	void DrawCell( const Location& loc,Color c );
 	int GetGridWidth() const;
 	int GetGridHeight() const;
 	bool IsInsideBoard( const Location& loc ) const;
-	bool CheckForObstacle(const Location& loc) const;
-	bool CheckForPoison(const Location& loc) const;
-	bool CheckForGoal(const Location& loc) const;
-	void SpawnObstacle(std::mt19937 rng, const class Snake& snake);
-	void InitGoal(std::mt19937 rng, const class Snake& snake);
-	void SpawnGoal(std::mt19937 rng, const class Snake& snake);
-	void SpawnPoison(std::mt19937 rng, const class Snake& snake);
-	void Poisoned(const Location& loc);
-	void GoalCollide(const Location& loc);
+	CellContents GetContent(const Location& loc) const;
+	void SpawnContent(std::mt19937 rng, const class Snake& snake, CellContents content);
+	void ConsumeContent(const Location& loc);
 	void DrawBorder();
-	void DrawObstacle();
-	void DrawPoison();
-	void DrawGoal();
+	void DrawCells();
 private:
 	static constexpr Color borderColor = Colors::Blue;
 	static constexpr Color obstacleColor = Colors::Gray;
@@ -46,7 +38,6 @@ private:
 	static constexpr int borderPadding = 2;
 	static constexpr int x = 70;
 	static constexpr int y = 50;
-	static constexpr int nGoal = 10;
 	CellContents hasContent[width  * height] = { CellContents::Empty };
 	Graphics& gfx;
 };
