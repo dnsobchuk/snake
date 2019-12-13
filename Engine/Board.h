@@ -7,6 +7,14 @@
 class Board
 {
 public:
+	enum class CellContents
+	{
+		Empty,
+		Obstacle,
+		Poison,
+		Goal
+	};
+public:
 	Board(std::mt19937 rng, const class Snake& snake, Graphics& gfx);
 	void DrawCell( const Location& loc,Color c );
 	int GetGridWidth() const;
@@ -39,8 +47,6 @@ private:
 	static constexpr int x = 70;
 	static constexpr int y = 50;
 	static constexpr int nGoal = 10;
-	bool hasObstacle[width  * height] = { false };
-	bool hasPoison[width * height];
-	bool hasGoal[width * height] = { false };
+	CellContents hasContent[width  * height] = { CellContents::Empty };
 	Graphics& gfx;
 };

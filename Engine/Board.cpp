@@ -43,17 +43,17 @@ bool Board::IsInsideBoard( const Location & loc ) const
 
 bool Board::CheckForObstacle(const Location & loc) const
 {
-	return hasObstacle[loc.y * width + loc.x];
+	return hasContent[loc.y * width + loc.x] == CellContents::Obstacle;
 }
 
 bool Board::CheckForPoison(const Location& loc) const
 {
-	return hasPoison[loc.y * width + loc.x];
+	return hasContent[loc.y * width + loc.x] == CellContents::Poison;
 }
 
 bool Board::CheckForGoal(const Location & loc) const
 {
-	return hasGoal[loc.y * width + loc.x];
+	return hasContent[loc.y * width + loc.x] == CellContents::Goal;
 }
 
 void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake)
@@ -68,7 +68,7 @@ void Board::SpawnObstacle(std::mt19937 rng, const Snake& snake)
 		newLoc.y = yDist(rng);
 	} while ( snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc) );
 
-	hasObstacle[newLoc.y * width + newLoc.x] = true;
+	hasContent[newLoc.y * width + newLoc.x] = CellContents::Obstacle;
 }
 
 void Board::InitGoal(std::mt19937 rng, const Snake & snake)
@@ -83,7 +83,7 @@ void Board::InitGoal(std::mt19937 rng, const Snake & snake)
 		newLoc.y = yDist(rng);
 		if ( !(snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc) ) ) 
 		{
-			hasGoal[newLoc.y * width + newLoc.x] = true;
+			hasContent[newLoc.y * width + newLoc.x] = CellContents::Goal;
 		}
 	}
 }
@@ -99,7 +99,7 @@ void Board::SpawnGoal(std::mt19937 rng, const Snake & snake)
 		newLoc.x = xDist(rng);
 		newLoc.y = yDist(rng);
 	} while (snake.IsInTile(newLoc) || CheckForObstacle(newLoc) || CheckForGoal(newLoc) || CheckForPoison(newLoc));
-	hasGoal[newLoc.y * width + newLoc.x] = true;
+	hasContent[newLoc.y * width + newLoc.x] = CellContents::Goal;
 }
 
 void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
@@ -111,13 +111,9 @@ void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
 		for (int x = 0; x < width; x++)
 		{
 			Location newLoc{ x, y };
-			if (snake.IsInTile(newLoc) || CheckForObstacle(newLoc))
+			if (bDist(rng) >= 35 && !(snake.IsInTile(newLoc) || CheckForObstacle(newLoc)) )
 			{
-				hasPoison[y * width + x] = false;
-			}
-			else
-			{
-				hasPoison[y * width + x] = bDist(rng) >= 35;
+				hasContent[y * width + x] = CellContents::Poison;
 			}
 		}
 	}
@@ -125,12 +121,12 @@ void Board::SpawnPoison(std::mt19937 rng, const Snake& snake)
 
 void Board::Poisoned(const Location& loc)
 {
-	hasPoison[loc.y * width + loc.x] = false;
+	hasContent[loc.y * width + loc.x] = CellContents::Empty;
 }
 
 void Board::GoalCollide(const Location & loc)
 {
-	hasGoal[loc.y * width + loc.x] = false;
+	hasContent[loc.y * width + loc.x] = CellContents::Empty;
 }
 
 void Board::DrawBorder()
