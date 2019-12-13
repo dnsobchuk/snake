@@ -41,9 +41,6 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
-	void SpeedUp(float dt);
-	void PoisonedSpeedUp(float dt);
-	void ForsageSpeedUp(float dt);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -60,13 +57,11 @@ private:
 	Sound sndMusic = Sound( L"Sounds\\Music_Loop.wav",Sound::LoopType::AutoFullSound );
 	Sound sndTitle = Sound( L"Sounds\\Title.wav" );
 	Sound sndFart = Sound( L"Sounds\\Fart.wav" );
-	static constexpr float snekMovePeriodMin = 0.06f;
-	static constexpr float snekMovePeriodStart = 0.4f;
-	float snekMovePeriod = snekMovePeriodStart;
+	static constexpr float snekMovePeriodMin = 0.040f;
+	static constexpr float snekMovePeriodSpeedup = 0.15f;
+	float snekMovePeriod = 0.4f;
 	float snekMoveCounter = 0.0f;
-	float snekMovePeriodBeforeForsage;
-	static constexpr float snekSpeedupFactor = 0.005f;
-	static constexpr float snekPoisonedFactor = 0.9f;
+	float snekSpeedupFactor = 0.93;
 	bool gameIsOver = false;
 	bool gameIsStarted = false;
 	/********************************/

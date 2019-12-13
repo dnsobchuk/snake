@@ -65,18 +65,15 @@ void Game::UpdateModel()
 			{
 				delta_loc = { 1,0 };
 			}
-			else if (wnd.kbd.KeyIsPressed(VK_CONTROL)) {
-				ForsageSpeedUp(dt);
-			}
-			else 
-			{
-				snekMovePeriod = std::max(snekMovePeriodBeforeForsage, snekMovePeriod);
+			float snekModifiedMovePeriod = snekMovePeriod;
+			if (wnd.kbd.KeyIsPressed(VK_CONTROL)) {
+				snekModifiedMovePeriod = std::min(snekMovePeriod, snekMovePeriodSpeedup);
 			}
 
 			snekMoveCounter += dt;
-			if( snekMoveCounter >= snekMovePeriod )
+			if( snekMoveCounter >= snekModifiedMovePeriod)
 			{
-				snekMoveCounter -= snekMovePeriod;
+				snekMoveCounter -= snekModifiedMovePeriod;
 				const Location next = snek.GetNextHeadLocation( delta_loc );
 				if( !brd.IsInsideBoard( next ) ||
 					snek.IsInTileExceptEnd( next ) ||
@@ -95,7 +92,6 @@ void Game::UpdateModel()
 						brd.SpawnGoal(rng,snek);
 						brd.SpawnObstacle(rng, snek);
 						sfxEat.Play( rng,0.8f );
-						snekMovePeriod = snekMovePeriodStart;
 					}
 					else
 					{
@@ -103,14 +99,13 @@ void Game::UpdateModel()
 						{
 							sfxEat.Play(rng, 0.8f);
 							brd.Poisoned(next);
-							PoisonedSpeedUp(dt);
+							snekMovePeriod = std::max(snekMovePeriod * snekSpeedupFactor, snekMovePeriodMin);
 						}
 						snek.MoveBy( delta_loc );
 					}
 					sfxSlither.Play( rng,0.08f );
 				}
 			}
-			SpeedUp(dt);
 		}
 	}
 	else
@@ -121,23 +116,6 @@ void Game::UpdateModel()
 			gameIsStarted = true;
 		}
 	}
-}
-
-void Game::SpeedUp(float dt)
-{
-	snekMovePeriod = std::max(snekMovePeriod - dt * snekSpeedupFactor, snekMovePeriodMin);
-}
-
-void Game::PoisonedSpeedUp(float dt)
-{
-	snekMovePeriodBeforeForsage = std::max(snekMovePeriodBeforeForsage - dt * snekPoisonedFactor, snekMovePeriodMin);
-	snekMovePeriod = std::max(snekMovePeriod - dt * snekPoisonedFactor, snekMovePeriodMin);
-}
-
-void Game::ForsageSpeedUp(float dt)
-{
-	snekMovePeriodBeforeForsage = std::max(snekMovePeriodBeforeForsage, snekMovePeriod);
-	snekMovePeriod = std::max(snekMovePeriod - dt, snekMovePeriodMin);
 }
 
 void Game::ComposeFrame()
